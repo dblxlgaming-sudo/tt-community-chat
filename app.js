@@ -5,7 +5,7 @@ import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js
    Never paste an sb_secret_ or service_role key here.
    ========================================================= */
 const SUPABASE_URL = "https://nffwhypkffajugilmjkl.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = "PASTE_YOUR_SB_PUBLISHABLE_KEY_HERE";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_7OFmqMJxBOShYwM8OVhfkQ_B0fjch37";
 
 const db = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
   auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
