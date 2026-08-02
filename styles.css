@@ -124,3 +124,111 @@ button{cursor:pointer}
   .reply-bar{top:105px}
   .pinned-banner{margin:8px}
 }
+.welcome-shell{
+  min-height:100vh;
+  display:grid;
+  place-items:center;
+  padding:20px;
+  background:
+    radial-gradient(circle at 50% 0,rgba(245,158,11,.12),transparent 45%),
+    #020914;
+  opacity:0;
+  animation:welcomeFadeIn .35s ease forwards;
+}
+
+.welcome-card{
+  width:min(520px,100%);
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:28px;
+  text-align:center;
+  box-shadow:var(--shadow);
+}
+
+.welcome-logo{
+  margin:0 auto 14px;
+}
+
+.welcome-emoji{
+  font-size:42px;
+  margin-bottom:8px;
+}
+
+.welcome-card h1{
+  margin:0;
+  font-size:24px;
+  line-height:1.25;
+}
+
+.welcome-ready{
+  margin:10px 0 0;
+  color:#fff;
+  font-weight:800;
+}
+
+.welcome-copy{
+  color:var(--muted);
+  line-height:1.55;
+  margin:16px auto;
+  max-width:410px;
+}
+
+.welcome-divider{
+  height:1px;
+  background:var(--line2);
+  margin:20px 0;
+}
+
+.welcome-card h2{
+  margin:0 0 12px;
+  font-size:15px;
+}
+
+.welcome-benefits{
+  text-align:left;
+  background:var(--panel2);
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:12px 14px;
+}
+
+.welcome-benefits div{
+  display:flex;
+  gap:9px;
+  align-items:center;
+  padding:8px 0;
+  border-bottom:1px solid var(--line2);
+  font-size:13px;
+}
+
+.welcome-benefits div:last-child{
+  border-bottom:0;
+}
+
+.welcome-enter{
+  margin-top:18px;
+}
+
+.welcome-shell.fade-out{
+  animation:welcomeFadeOut .3s ease forwards;
+}
+
+.chat-fade-in{
+  animation:chatFadeIn .3s ease forwards;
+}
+
+@keyframes welcomeFadeIn{
+  from{opacity:0;transform:translateY(8px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+@keyframes welcomeFadeOut{
+  from{opacity:1}
+  to{opacity:0}
+}
+
+@keyframes chatFadeIn{
+  from{opacity:0}
+  to{opacity:1}
+}
