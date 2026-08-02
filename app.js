@@ -226,7 +226,7 @@ async function completeWelcome(){
   const button = $("enterChatBtn");
 
   button.disabled = true;
-  button.textContent = "Opening TT Chat…";
+  button.textContent = "Entering Triple Threat…";
 
   const { error } = await db
     .from("profiles")
@@ -236,27 +236,16 @@ async function completeWelcome(){
   if(error){
     console.error(error);
     button.disabled = false;
-    button.textContent = "Enter TT Chat →";
+    button.textContent = "Enter Triple Threat →";
     toast("Could not save your welcome status.", true);
     return;
   }
 
   state.profile.welcome_seen = true;
 
-  $("welcomeView").classList.add("fade-out");
-
-  setTimeout(async()=>{
-    $("welcomeView").classList.add("hidden");
-    $("welcomeView").classList.remove("fade-out");
-
-    $("chatView").classList.add("chat-fade-in");
-
-    await openChat();
-
-    setTimeout(()=>{
-      $("chatView").classList.remove("chat-fade-in");
-    },300);
-  },300);
+  setTimeout(()=>{
+    window.history.back();
+  },700);
 }
 
 async function leaveChat(){
