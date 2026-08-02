@@ -202,14 +202,53 @@ async function enterChat(user){
     toast(err.message || "Could not load TT Chat.", true);
   }
 }
+async function completeWelcome(){
+  const button = $("enterChatBtn");
+  button.disabled = true;
+  button.textContent = "Opening TT Chat…";
+
+  const { error } = await db
+    .from("profiles")
+    .update({ welcome_seen: true })
+    .eq("id", state.user.id);
+
+  if(error){
+    console.error(error);
+    button.disabled = false;
+    button.textContent = "Enter TT Chat →";
+    toast("Could not save your welcome status.", true);
+    return;
+  }
+
+  state.profile.welcome_seen = true;
+
+  $("welcomeView").classList.add("fade-out");
+
+  setTimeout(async()=>{
+    $("welcomeView").classList.add("hidden");
+    $("welcomeView").classList.remove("fade-out");
+
+    $("chatView").classList.add("chat-fade-in");
+
+    await openChat();
+
+    setTimeout(()=>{
+      $("chatView").classList.remove("chat-fade-in");
+    },300);
+  },300);
+}
 async function leaveChat(){
   state.channels.forEach(ch=>db.removeChannel(ch));
   state.channels = [];
   if(state.presenceChannel) db.removeChannel(state.presenceChannel);
   state.presenceChannel = null;
-  state.user = null; state.profile = null;
-  $("chatView").classList.add("hidden");
-  $("authView").classList.remove("hidden");
+  state.user = null;
+state.profile = null;
+state.chatStarted = false;
+
+$("welcomeView").classList.add("hidden");
+$("chatView").classList.add("hidden");
+$("authView").classList.remove("hidden");
 }
 async function signOut(){
   await db.auth.signOut();
@@ -561,7 +600,8 @@ function bindUI(){
   $("showSignUp").onclick=()=>setAuthMode("signup");
   $("authForm").onsubmit=submitAuth;
   $("forgotPassword").onclick=forgotPassword;
-  $("composer").onsubmit=sendMessage;
+$("enterChatBtn").onclick=completeWelcome;
+$("composer").onsubmit=sendMessage;
   $("attachBtn").onclick=chooseImage;
   $("imageInput").onchange=e=>previewImage(e.target.files?.[0]);
   $("removeImage").onclick=clearImage;
