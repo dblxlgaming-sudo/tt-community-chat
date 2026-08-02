@@ -243,10 +243,12 @@ async function completeWelcome(){
 
   state.profile.welcome_seen = true;
 
-  setTimeout(()=>{
+button.disabled = true;
+button.textContent = "Entering Triple Threat...";
+
+setTimeout(() => {
     window.history.back();
-  },700);
-}
+},700);
 
 async function leaveChat(){
   state.channels.forEach(ch=>db.removeChannel(ch));
