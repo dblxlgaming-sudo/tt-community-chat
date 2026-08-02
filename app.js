@@ -278,6 +278,12 @@ async function leaveChat(){
 }
 
 async function signOut(){
+  state.chatStarted = false;
+
+  $("welcomeView").classList.add("hidden");
+  $("chatView").classList.add("hidden");
+  $("authView").classList.remove("hidden");
+
   await db.auth.signOut();
 }
 
