@@ -8,7 +8,13 @@ const SUPABASE_URL = "https://nffwhypkffajugilmjkl.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_7OFmqMJxBOShYwM8OVhfkQ_B0fjch37";
 
 const db = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
-  auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
+  auth: {
+    storage: window.localStorage,
+    storageKey: "tt-chat-auth",
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: true
+  }
 });
 
 const $ = (id) => document.getElementById(id);
