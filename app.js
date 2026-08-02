@@ -149,8 +149,7 @@ async function loadProfile(){
       ${profileAvatar(data,"profile-big")}
       <div><strong>${esc(data.display_name||"Member")}</strong>
       <div class="muted small">${esc(data.badge||"Member")} · ${esc(data.role)}</div>
-      <div class="muted small">${esc(data.email||"")}</div></div>
-    </div>`;
+          </div>`;
 }
 async function enterChat(user){
   state.user = user;
