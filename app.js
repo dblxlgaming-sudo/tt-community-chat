@@ -142,12 +142,45 @@ async function forgotPassword(){
   if(error) return toast(error.message, true);
   toast("Password reset email sent.");
 }
-async function loadProfile()async function openChat(){
+async function loadProfile(){
+  const { data, error } = await db
+    .from("profiles")
+    .select("*")
+    .eq("id", state.user.id)
+    .single();
+
+  if(error) throw error;
+
+  state.profile = data;
+
+  $("headerName").textContent = data.display_name || "Member";
+
+  $("headerAvatar").outerHTML = profileAvatar(data, "mini-avatar").replace(
+    'class="mini-avatar"',
+    'id="headerAvatar" class="mini-avatar"'
+  );
+
+  $("createPollBtn").classList.toggle("hidden", data.role !== "admin");
+
+  $("profileSummary").innerHTML = `
+    <div class="profile-row">
+      ${profileAvatar(data,"profile-big")}
+      <div>
+        <strong>${esc(data.display_name||"Member")}</strong>
+        <div class="muted small">
+          ${esc(data.badge||"Member")} · ${esc(data.role)}
+        </div>
+      </div>
+    </div>`;
+}
+
+async function openChat(){
   $("authView").classList.add("hidden");
   $("welcomeView").classList.add("hidden");
   $("chatView").classList.remove("hidden");
 
   if(state.chatStarted) return;
+
   state.chatStarted = true;
 
   await Promise.all([
@@ -159,22 +192,8 @@ async function loadProfile()async function openChat(){
   subscribeRealtime();
   startPresence();
   renderAll();
-}{
-  const { data, error } = await db.from("profiles").select("*").eq("id", state.user.id).single();
-  if(error) throw error;
-  state.profile = data;
-  $("headerName").textContent = data.display_name || "Member";
-  $("headerAvatar").outerHTML = profileAvatar(data, "mini-avatar").replace(
-    'class="mini-avatar"', 'id="headerAvatar" class="mini-avatar"'
-  );
-  $("createPollBtn").classList.toggle("hidden", data.role !== "admin");
-  $("profileSummary").innerHTML = `
-    <div class="profile-row">
-      ${profileAvatar(data,"profile-big")}
-      <div><strong>${esc(data.display_name||"Member")}</strong>
-      <div class="muted small">${esc(data.badge||"Member")} · ${esc(data.role)}</div>
-          </div>`;
 }
+
 async function enterChat(user){
   state.user = user;
 
@@ -202,8 +221,10 @@ async function enterChat(user){
     toast(err.message || "Could not load TT Chat.", true);
   }
 }
+
 async function completeWelcome(){
   const button = $("enterChatBtn");
+
   button.disabled = true;
   button.textContent = "Opening TT Chat…";
 
@@ -237,19 +258,25 @@ async function completeWelcome(){
     },300);
   },300);
 }
+
 async function leaveChat(){
   state.channels.forEach(ch=>db.removeChannel(ch));
   state.channels = [];
-  if(state.presenceChannel) db.removeChannel(state.presenceChannel);
+
+  if(state.presenceChannel){
+    db.removeChannel(state.presenceChannel);
+  }
+
   state.presenceChannel = null;
   state.user = null;
-state.profile = null;
-state.chatStarted = false;
+  state.profile = null;
+  state.chatStarted = false;
 
-$("welcomeView").classList.add("hidden");
-$("chatView").classList.add("hidden");
-$("authView").classList.remove("hidden");
+  $("welcomeView").classList.add("hidden");
+  $("chatView").classList.add("hidden");
+  $("authView").classList.remove("hidden");
 }
+
 async function signOut(){
   await db.auth.signOut();
 }
