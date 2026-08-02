@@ -33,7 +33,8 @@ const state = {
   oldestLoaded: null,
   channels: [],
   presenceChannel: null,
-  activeView: "live"
+  activeView: "live",
+chatStarted: false
 };
 
 const reactionMap = { heart:"❤️", fire:"🔥", tennis:"🎾", money:"💰" };
@@ -141,7 +142,24 @@ async function forgotPassword(){
   if(error) return toast(error.message, true);
   toast("Password reset email sent.");
 }
-async function loadProfile(){
+async function loadProfile()async function openChat(){
+  $("authView").classList.add("hidden");
+  $("welcomeView").classList.add("hidden");
+  $("chatView").classList.remove("hidden");
+
+  if(state.chatStarted) return;
+  state.chatStarted = true;
+
+  await Promise.all([
+    loadMessages(true),
+    loadReactions(),
+    loadPollData()
+  ]);
+
+  subscribeRealtime();
+  startPresence();
+  renderAll();
+}{
   const { data, error } = await db.from("profiles").select("*").eq("id", state.user.id).single();
   if(error) throw error;
   state.profile = data;
@@ -159,14 +177,26 @@ async function loadProfile(){
 }
 async function enterChat(user){
   state.user = user;
+
   $("authView").classList.add("hidden");
-  $("chatView").classList.remove("hidden");
+  $("welcomeView").classList.add("hidden");
+  $("chatView").classList.add("hidden");
+
   try{
     await loadProfile();
-    await Promise.all([loadMessages(true), loadReactions(), loadPollData()]);
-    subscribeRealtime();
-    startPresence();
-    renderAll();
+
+    if(state.profile.welcome_seen !== true){
+      $("welcomeView").classList.remove("hidden");
+
+      requestAnimationFrame(()=>{
+        $("enterChatBtn")?.focus();
+      });
+
+      return;
+    }
+
+    await openChat();
+
   }catch(err){
     console.error(err);
     toast(err.message || "Could not load TT Chat.", true);
